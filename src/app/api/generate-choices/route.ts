@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAnthropicClient } from "@/lib/anthropic";
 import { buildChoicesPrompt, SYSTEM_PROMPT } from "@/lib/prompts";
 import { GenerateChoicesSchema } from "@/lib/validators";
+import { parseJsonResponse } from "@/lib/utils";
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,12 +30,13 @@ export async function POST(req: NextRequest) {
     const rawText =
       message.content[0].type === "text" ? message.content[0].text.trim() : "[]";
 
-    const choices = JSON.parse(rawText);
+    const choices = parseJsonResponse(rawText);
     return NextResponse.json(choices);
   } catch (err) {
     console.error("[generate-choices]", err);
+    const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to generate choices. Please try again." },
+      { error: `Failed to generate choices: ${message}` },
       { status: 500 }
     );
   }

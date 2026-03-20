@@ -58,8 +58,9 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error("[analyze-answer]", err);
+    const message = err instanceof Error ? err.message : "Unknown error";
     return new Response(
-      JSON.stringify({ error: "Failed to analyze answer. Please try again." }),
+      JSON.stringify({ error: `Failed to analyze answer: ${message}` }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }

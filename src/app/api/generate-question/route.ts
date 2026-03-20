@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getAnthropicClient } from "@/lib/anthropic";
 import { buildQuestionPrompt, SYSTEM_PROMPT } from "@/lib/prompts";
 import { GenerateQuestionSchema } from "@/lib/validators";
+import { parseJsonResponse } from "@/lib/utils";
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
     const rawText =
       message.content[0].type === "text" ? message.content[0].text.trim() : "";
 
-    const questionData = JSON.parse(rawText);
+    const questionData = parseJsonResponse(rawText) as Record<string, unknown>;
     const question = {
       id: uuidv4(),
       type,
@@ -41,8 +42,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(question);
   } catch (err) {
     console.error("[generate-question]", err);
+    const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to generate question. Please try again." },
+      { error: `Failed to generate question: ${message}` },
       { status: 500 }
     );
   }
