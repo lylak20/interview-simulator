@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AnswerMode, MCOption } from "@/lib/types";
+import VoiceRecorder from "./VoiceRecorder";
 
 interface Props {
   answerMode: AnswerMode;
@@ -42,6 +43,14 @@ export default function AnswerInput({
     }
   };
 
+  // Called by VoiceRecorder once transcript is ready — drops text into the box
+  const handleTranscript = (text: string) => {
+    setTextAnswer((prev) => {
+      const trimmed = prev.trim();
+      return trimmed ? `${trimmed} ${text}` : text;
+    });
+  };
+
   const canSubmit =
     answerMode === "freetext"
       ? textAnswer.trim().length > 0
@@ -51,55 +60,75 @@ export default function AnswerInput({
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={() => handleModeSwitch("freetext")}
-          className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-            answerMode === "freetext"
-              ? "bg-indigo-600 text-white"
-              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-          }`}
-        >
-          Write Answer
-        </button>
-        <button
-          type="button"
-          onClick={() => handleModeSwitch("multiple-choice")}
-          disabled={loadingOptions}
-          className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 ${
-            answerMode === "multiple-choice"
-              ? "bg-indigo-600 text-white"
-              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-          }`}
-        >
-          {loadingOptions && (
-            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-          )}
-          Multiple Choice
-        </button>
+      {/* Mode toggle */}
+      <div className="flex gap-0">
+        {(
+          [
+            ["freetext", "WRITE ANSWER"],
+            ["multiple-choice", "MULTIPLE CHOICE"],
+          ] as const
+        ).map(([mode, label]) => (
+          <button
+            key={mode}
+            type="button"
+            onClick={() => handleModeSwitch(mode)}
+            disabled={loadingOptions && mode === "multiple-choice"}
+            className="px-4 py-2.5 flex items-center gap-2 transition-opacity disabled:opacity-50"
+            style={{
+              fontFamily: "var(--font-space-mono)",
+              fontSize: "0.65rem",
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              background: answerMode === mode ? "var(--fg)" : "var(--bg-surface)",
+              color: answerMode === mode ? "var(--white)" : "var(--muted)",
+            }}
+          >
+            {loadingOptions && mode === "multiple-choice" && (
+              <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            )}
+            {label}
+          </button>
+        ))}
       </div>
 
+      {/* Free text mode */}
       {answerMode === "freetext" ? (
-        <textarea
-          value={textAnswer}
-          onChange={(e) => setTextAnswer(e.target.value)}
-          placeholder="Write your answer here. For behavioral questions, try to follow the STAR format: Situation, Task, Action, Result..."
-          className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none min-h-[180px] resize-y"
-        />
-      ) : options ? (
         <div className="space-y-3">
+          {/* Voice recorder — sits above textarea, transcript flows into it */}
+          <VoiceRecorder onTranscript={handleTranscript} />
+
+          <textarea
+            value={textAnswer}
+            onChange={(e) => setTextAnswer(e.target.value)}
+            placeholder="Write your answer here. For behavioral questions, follow the STAR format: Situation, Task, Action, Result..."
+            className="w-full px-4 py-3 text-sm focus:outline-none min-h-[180px] resize-y"
+            style={{
+              background: "var(--white)",
+              color: "var(--fg)",
+              border: "1.5px dashed var(--border)",
+              fontFamily: "var(--font-space-grotesk)",
+            }}
+          />
+        </div>
+      ) : options ? (
+        /* Multiple-choice mode */
+        <div className="space-y-2">
           {options.map((option) => (
             <label
               key={option.id}
-              className={`flex items-start gap-3 rounded-xl border-2 p-4 cursor-pointer transition-all ${
-                selectedOption === option.id
-                  ? "border-indigo-600 bg-indigo-50"
-                  : "border-slate-200 hover:border-slate-300"
-              }`}
+              className="flex items-start gap-3 p-4 cursor-pointer transition-all"
+              style={{
+                background:
+                  selectedOption === option.id
+                    ? "var(--fg)"
+                    : "var(--bg-surface)",
+                color:
+                  selectedOption === option.id ? "var(--white)" : "var(--fg)",
+                border: "1.5px dashed var(--border)",
+              }}
             >
               <input
                 type="radio"
@@ -107,31 +136,42 @@ export default function AnswerInput({
                 value={option.id}
                 checked={selectedOption === option.id}
                 onChange={() => setSelectedOption(option.id)}
-                className="mt-0.5 h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                className="mt-0.5 h-3.5 w-3.5 shrink-0"
+                style={{ accentColor: "var(--fg)" }}
               />
-              <div>
-                <span className="font-semibold text-slate-700 mr-2">
+              <div className="text-sm">
+                <span
+                  className="font-bold mr-2"
+                  style={{ fontFamily: "var(--font-space-mono)", fontSize: "0.7rem" }}
+                >
                   {option.id}.
                 </span>
-                <span className="text-slate-700">{option.text}</span>
+                {option.text}
               </div>
             </label>
           ))}
         </div>
       ) : null}
 
+      {/* Submit — identical flow whether typed or voice */}
       <button
         onClick={handleSubmit}
         disabled={!canSubmit || loading}
-        className="w-full rounded-xl bg-indigo-600 py-3.5 font-semibold text-white shadow-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+        className="w-full py-4 font-bold tracking-[0.2em] uppercase transition-opacity disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        style={{
+          fontFamily: "var(--font-space-mono)",
+          fontSize: "0.75rem",
+          background: "var(--fg)",
+          color: "var(--white)",
+        }}
       >
         {loading && (
-          <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
         )}
-        {loading ? "Analyzing Your Answer..." : "Submit Answer"}
+        {loading ? "ANALYZING..." : "LOG IT"}
       </button>
     </div>
   );

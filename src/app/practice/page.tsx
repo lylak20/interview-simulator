@@ -23,97 +23,168 @@ export default function PracticePage() {
   const isLoadingFeedback = state.phase === "loading-feedback";
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-3xl flex items-center justify-between px-6 py-4">
-          <Link href="/" className="text-lg font-bold text-slate-900">
-            InterviewPrep <span className="text-indigo-600">AI</span>
+    <div className="min-h-screen" style={{ background: "var(--bg)" }}>
+      {/* Header */}
+      <header
+        className="px-6 py-4"
+        style={{ borderBottom: "1.5px dashed var(--border)" }}
+      >
+        <div className="mx-auto max-w-2xl flex items-center justify-between">
+          <Link
+            href="/"
+            className="font-bold tracking-[0.2em] uppercase transition-opacity hover:opacity-70"
+            style={{
+              fontFamily: "var(--font-space-mono)",
+              fontSize: "0.875rem",
+              color: "var(--fg)",
+            }}
+          >
+            NOGGIN
           </Link>
-          {state.phase !== "setup" && (
-            <button
-              onClick={reset}
-              className="text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors"
+          <div className="flex items-center gap-4">
+            <span
+              className="text-xs tracking-[0.14em] uppercase"
+              style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
             >
-              Start Over
-            </button>
-          )}
+              {state.phase !== "setup"
+                ? state.config?.type?.toUpperCase()
+                : "SESSION"}
+            </span>
+            {state.phase !== "setup" && (
+              <button
+                onClick={reset}
+                className="text-xs tracking-[0.14em] uppercase transition-opacity hover:opacity-70"
+                style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+              >
+                ✕ RESET
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-6 py-10">
+      <main className="mx-auto max-w-2xl px-6 py-10">
+        {/* Error banner */}
         {state.error && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 flex items-center justify-between">
-            <span>{state.error}</span>
+          <div
+            className="mb-6 px-4 py-3 flex items-center justify-between"
+            style={{
+              background: "var(--bg-surface)",
+              border: "1.5px dashed var(--border)",
+            }}
+          >
+            <span
+              className="text-xs tracking-[0.1em]"
+              style={{ fontFamily: "var(--font-space-mono)", color: "var(--fg)" }}
+            >
+              {state.error}
+            </span>
             <button
               onClick={() => setAnswerMode(state.answerMode)}
-              className="text-red-600 font-medium hover:text-red-800"
+              className="text-xs tracking-[0.14em] uppercase ml-4 transition-opacity hover:opacity-70"
+              style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
             >
-              Dismiss
+              DISMISS
             </button>
           </div>
         )}
 
+        {/* Setup */}
         {state.phase === "setup" && (
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 mb-2">
-              Set Up Your Practice Session
-            </h1>
-            <p className="text-slate-600 mb-8">
-              Choose a question type and difficulty level to get started.
+            <p
+              className="text-xs tracking-[0.2em] uppercase mb-1"
+              style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+            >
+              CURRENT STATE
             </p>
-            <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-              <QuestionSetup
-                onGenerate={generateQuestion}
-                loading={false}
-              />
-            </div>
+            <h1
+              className="text-2xl font-bold tracking-tight mb-8"
+              style={{ color: "var(--fg)" }}
+            >
+              SET UP SESSION
+            </h1>
+            <QuestionSetup onGenerate={generateQuestion} loading={false} />
           </div>
         )}
 
+        {/* Loading question */}
         {isLoadingQuestion && (
-          <div className="flex flex-col items-center justify-center py-20">
-            <svg className="animate-spin h-10 w-10 text-indigo-600 mb-4" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          <div className="flex flex-col items-center justify-center py-24">
+            <svg
+              className="animate-spin h-8 w-8 mb-4"
+              style={{ color: "var(--fg)" }}
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            <p className="text-slate-600 font-medium">Generating your question...</p>
+            <p
+              className="text-xs tracking-[0.2em] uppercase"
+              style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+            >
+              GENERATING QUESTION...
+            </p>
           </div>
         )}
 
-        {(state.phase === "answering" ||
-          isLoadingOptions ||
-          isLoadingFeedback) &&
+        {/* Answering */}
+        {(state.phase === "answering" || isLoadingOptions || isLoadingFeedback) &&
           state.question &&
           state.config && (
-            <div className="space-y-6">
-              <h1 className="text-2xl font-bold text-slate-900">
-                Your Interview Question
-              </h1>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between mb-6">
+                <p
+                  className="text-xs tracking-[0.2em] uppercase"
+                  style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+                >
+                  YOUR QUESTION
+                </p>
+              </div>
               <QuestionDisplay
                 question={state.question}
                 type={state.config.type}
                 difficulty={state.config.difficulty}
               />
-              <AnswerInput
-                answerMode={state.answerMode}
-                options={state.options}
-                onSetMode={setAnswerMode}
-                onLoadOptions={loadOptions}
-                onSubmit={submitAnswer}
-                loadingOptions={isLoadingOptions}
-                loadingFeedback={isLoadingFeedback}
-              />
+              <div style={{ borderTop: "1.5px dashed var(--border)", paddingTop: "1rem" }}>
+                <p
+                  className="text-xs tracking-[0.2em] uppercase mb-4"
+                  style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+                >
+                  YOUR RESPONSE
+                </p>
+                <AnswerInput
+                  answerMode={state.answerMode}
+                  options={state.options}
+                  onSetMode={setAnswerMode}
+                  onLoadOptions={loadOptions}
+                  onSubmit={submitAnswer}
+                  loadingOptions={isLoadingOptions}
+                  loadingFeedback={isLoadingFeedback}
+                />
+              </div>
             </div>
           )}
 
+        {/* Feedback */}
         {state.phase === "feedback" &&
           state.question &&
           state.answer &&
           state.feedback &&
           state.config && (
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 mb-6">
-                Your Feedback
+              <p
+                className="text-xs tracking-[0.2em] uppercase mb-1"
+                style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+              >
+                RECENT LOGS
+              </p>
+              <h1
+                className="text-2xl font-bold tracking-tight mb-6"
+                style={{ color: "var(--fg)" }}
+              >
+                FEEDBACK
               </h1>
               <FeedbackDisplay
                 question={state.question}

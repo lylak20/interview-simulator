@@ -7,31 +7,46 @@ interface Props {
 }
 
 const typeLabels: Record<string, string> = {
-  behavioral: "Behavioral (STAR)",
-  case: "Case Study",
-  situational: "Situational Judgment",
-};
-
-const difficultyColors: Record<string, string> = {
-  easy: "bg-green-100 text-green-700",
-  medium: "bg-yellow-100 text-yellow-700",
-  hard: "bg-red-100 text-red-700",
+  behavioral: "BEHAVIORAL",
+  case: "CASE STUDY",
+  situational: "SITUATIONAL",
 };
 
 export default function QuestionDisplay({ question, type, difficulty }: Props) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-700">
+    <div
+      className="p-6"
+      style={{
+        background: "var(--white)",
+        border: "1.5px dashed var(--border)",
+      }}
+    >
+      <div className="flex items-center gap-3 mb-4">
+        <span
+          className="px-3 py-1 text-xs tracking-[0.14em] uppercase"
+          style={{
+            fontFamily: "var(--font-space-mono)",
+            background: "var(--tag-bg)",
+            color: "var(--tag-text)",
+          }}
+        >
           {typeLabels[type] || type}
         </span>
         <span
-          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium capitalize ${difficultyColors[difficulty] || ""}`}
+          className="px-3 py-1 text-xs tracking-[0.14em] uppercase"
+          style={{
+            fontFamily: "var(--font-space-mono)",
+            background: "var(--bg-surface)",
+            color: "var(--muted)",
+          }}
         >
           {difficulty}
         </span>
       </div>
-      <p className="text-lg font-medium text-slate-900 leading-relaxed">
+      <p
+        className="text-base leading-relaxed"
+        style={{ color: "var(--fg)" }}
+      >
         {question}
       </p>
     </div>

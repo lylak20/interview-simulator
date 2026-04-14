@@ -13,18 +13,56 @@ interface Props {
 
 function StarBar({ score, label, comment }: { score: number; label: string; comment: string }) {
   return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-slate-700">{label}</span>
-        <span className="text-sm font-semibold text-indigo-600">{score}/5</span>
+    <div className="py-4" style={{ borderTop: "1.5px dashed var(--border)" }}>
+      <div className="flex items-center justify-between mb-2">
+        <span
+          className="text-xs tracking-[0.14em] uppercase"
+          style={{ fontFamily: "var(--font-space-mono)", color: "var(--fg)" }}
+        >
+          {label}
+        </span>
+        <span
+          className="text-xs"
+          style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+        >
+          {score}/5
+        </span>
       </div>
-      <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
+      <div
+        className="h-1.5 mb-2 overflow-hidden"
+        style={{ background: "var(--bg-surface)" }}
+      >
         <div
-          className="h-full rounded-full bg-indigo-500 transition-all"
-          style={{ width: `${(score / 5) * 100}%` }}
+          className="h-full transition-all"
+          style={{
+            width: `${(score / 5) * 100}%`,
+            background: "var(--fg)",
+          }}
         />
       </div>
-      <p className="text-xs text-slate-500">{comment}</p>
+      <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>
+        {comment}
+      </p>
+    </div>
+  );
+}
+
+function Section({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div
+      className="p-6"
+      style={{
+        background: "var(--white)",
+        border: "1.5px dashed var(--border)",
+      }}
+    >
+      <p
+        className="text-xs tracking-[0.2em] uppercase mb-3"
+        style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+      >
+        {label}
+      </p>
+      {children}
     </div>
   );
 }
@@ -38,59 +76,77 @@ export default function FeedbackDisplay({
   onReset,
 }: Props) {
   return (
-    <div className="space-y-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-2">
-          Question
-        </h3>
-        <p className="text-slate-800">{question}</p>
-      </div>
+    <div className="space-y-3">
+      <Section label="QUESTION">
+        <p className="text-sm leading-relaxed" style={{ color: "var(--fg)" }}>
+          {question}
+        </p>
+      </Section>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-2">
-          Your Answer
-        </h3>
-        <p className="text-slate-700 whitespace-pre-wrap">{answer}</p>
-      </div>
+      <Section label="YOUR ANSWER">
+        <p
+          className="text-sm leading-relaxed whitespace-pre-wrap"
+          style={{ color: "var(--muted)" }}
+        >
+          {answer}
+        </p>
+      </Section>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
-          Overall Assessment
-        </h3>
-        <p className="text-slate-700 leading-relaxed">
+      <Section label="OVERALL">
+        <p className="text-sm leading-relaxed" style={{ color: "var(--fg)" }}>
           {feedback.overallAssessment}
         </p>
-      </div>
+      </Section>
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        <div className="rounded-2xl border border-green-200 bg-green-50 p-6">
-          <h3 className="text-sm font-semibold text-green-800 uppercase tracking-wide mb-3 flex items-center gap-2">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Strengths
-          </h3>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {/* Strengths */}
+        <div
+          className="p-6"
+          style={{
+            background: "var(--white)",
+            border: "1.5px dashed var(--border)",
+          }}
+        >
+          <p
+            className="text-xs tracking-[0.2em] uppercase mb-3"
+            style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+          >
+            STRENGTHS
+          </p>
           <ul className="space-y-2">
             {feedback.strengths.map((s, i) => (
-              <li key={i} className="text-sm text-green-900 flex items-start gap-2">
-                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-green-500 shrink-0" />
+              <li key={i} className="text-sm flex items-start gap-2" style={{ color: "var(--fg)" }}>
+                <span
+                  className="mt-2 h-1 w-1 shrink-0"
+                  style={{ background: "var(--fg)" }}
+                />
                 {s}
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
-          <h3 className="text-sm font-semibold text-amber-800 uppercase tracking-wide mb-3 flex items-center gap-2">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-            </svg>
-            Areas for Improvement
-          </h3>
+        {/* Improvements */}
+        <div
+          className="p-6"
+          style={{
+            background: "var(--white)",
+            border: "1.5px dashed var(--border)",
+          }}
+        >
+          <p
+            className="text-xs tracking-[0.2em] uppercase mb-3"
+            style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+          >
+            AREAS TO WORK ON
+          </p>
           <ul className="space-y-2">
             {feedback.improvements.map((imp, i) => (
-              <li key={i} className="text-sm text-amber-900 flex items-start gap-2">
-                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0" />
+              <li key={i} className="text-sm flex items-start gap-2" style={{ color: "var(--muted)" }}>
+                <span
+                  className="mt-2 h-1 w-1 shrink-0"
+                  style={{ background: "var(--muted)" }}
+                />
                 {imp}
               </li>
             ))}
@@ -99,50 +155,51 @@ export default function FeedbackDisplay({
       </div>
 
       {questionType === "behavioral" && feedback.starEvaluation && (
-        <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-6">
-          <h3 className="text-sm font-semibold text-indigo-800 uppercase tracking-wide mb-4 flex items-center gap-2">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.562.562 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-            </svg>
-            STAR Framework Evaluation
-          </h3>
-          <div className="space-y-4">
-            <StarBar
-              label="Situation"
-              score={feedback.starEvaluation.situation.score}
-              comment={feedback.starEvaluation.situation.comment}
-            />
-            <StarBar
-              label="Task"
-              score={feedback.starEvaluation.task.score}
-              comment={feedback.starEvaluation.task.comment}
-            />
-            <StarBar
-              label="Action"
-              score={feedback.starEvaluation.action.score}
-              comment={feedback.starEvaluation.action.comment}
-            />
-            <StarBar
-              label="Result"
-              score={feedback.starEvaluation.result.score}
-              comment={feedback.starEvaluation.result.comment}
-            />
-          </div>
+        <div
+          className="p-6"
+          style={{
+            background: "var(--white)",
+            border: "1.5px dashed var(--border)",
+          }}
+        >
+          <p
+            className="text-xs tracking-[0.2em] uppercase mb-2"
+            style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+          >
+            STAR FRAMEWORK
+          </p>
+          <StarBar label="SITUATION" score={feedback.starEvaluation.situation.score} comment={feedback.starEvaluation.situation.comment} />
+          <StarBar label="TASK" score={feedback.starEvaluation.task.score} comment={feedback.starEvaluation.task.comment} />
+          <StarBar label="ACTION" score={feedback.starEvaluation.action.score} comment={feedback.starEvaluation.action.comment} />
+          <StarBar label="RESULT" score={feedback.starEvaluation.result.score} comment={feedback.starEvaluation.result.comment} />
         </div>
       )}
 
-      <div className="flex gap-3">
+      <div className="flex gap-2 pt-2">
         <button
           onClick={onTryAnother}
-          className="flex-1 rounded-xl bg-indigo-600 py-3.5 font-semibold text-white shadow-md hover:bg-indigo-700 transition-colors"
+          className="flex-1 py-4 font-bold tracking-[0.2em] uppercase transition-opacity hover:opacity-80"
+          style={{
+            fontFamily: "var(--font-space-mono)",
+            fontSize: "0.7rem",
+            background: "var(--fg)",
+            color: "var(--white)",
+          }}
         >
-          Try Another Question
+          TRY ANOTHER
         </button>
         <button
           onClick={onReset}
-          className="flex-1 rounded-xl border border-slate-300 py-3.5 font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+          className="flex-1 py-4 font-bold tracking-[0.2em] uppercase transition-opacity hover:opacity-70"
+          style={{
+            fontFamily: "var(--font-space-mono)",
+            fontSize: "0.7rem",
+            background: "var(--bg-surface)",
+            color: "var(--muted)",
+            border: "1.5px dashed var(--border)",
+          }}
         >
-          New Setup
+          NEW SESSION
         </button>
       </div>
     </div>

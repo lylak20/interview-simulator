@@ -24,51 +24,73 @@ export default function QuestionSetup({ onGenerate, loading }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-8">
+      {/* Question type */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-2">
-          Question Type
-        </label>
-        <div className="grid grid-cols-3 gap-3">
+        <p
+          className="text-xs tracking-[0.2em] uppercase mb-4"
+          style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+        >
+          QUESTION TYPE
+        </p>
+        <div className="grid grid-cols-3 gap-2">
           {(
             [
-              ["behavioral", "Behavioral", "STAR method"],
-              ["case", "Case Study", "Problem-solving"],
-              ["situational", "Situational", "Judgment-based"],
+              ["behavioral", "BEHAVIORAL", "STAR method"],
+              ["case", "CASE", "Problem-solving"],
+              ["situational", "SITUATIONAL", "Judgment-based"],
             ] as const
           ).map(([value, label, sub]) => (
             <button
               key={value}
               type="button"
               onClick={() => setType(value)}
-              className={`rounded-xl border-2 p-4 text-left transition-all ${
-                type === value
-                  ? "border-indigo-600 bg-indigo-50"
-                  : "border-slate-200 hover:border-slate-300"
-              }`}
+              className="p-4 text-left transition-all"
+              style={{
+                background: type === value ? "var(--fg)" : "var(--bg-surface)",
+                color: type === value ? "var(--white)" : "var(--fg)",
+              }}
             >
-              <div className="font-semibold text-slate-900">{label}</div>
-              <div className="text-xs text-slate-500 mt-0.5">{sub}</div>
+              <div
+                className="text-xs font-bold tracking-[0.1em] uppercase"
+                style={{ fontFamily: "var(--font-space-mono)" }}
+              >
+                {label}
+              </div>
+              <div
+                className="text-xs mt-1 opacity-60"
+                style={{ fontFamily: "var(--font-space-mono)" }}
+              >
+                {sub}
+              </div>
             </button>
           ))}
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-2">
-          Difficulty Level
-        </label>
-        <div className="grid grid-cols-3 gap-3">
+      {/* Difficulty */}
+      <div style={{ borderTop: "1.5px dashed var(--border)", paddingTop: "1.5rem" }}>
+        <p
+          className="text-xs tracking-[0.2em] uppercase mb-4"
+          style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+        >
+          DIFFICULTY
+        </p>
+        <div className="grid grid-cols-3 gap-2">
           {(["easy", "medium", "hard"] as const).map((level) => (
             <button
               key={level}
               type="button"
               onClick={() => setDifficulty(level)}
-              className={`rounded-xl border-2 py-3 px-4 capitalize font-medium transition-all ${
-                difficulty === level
-                  ? "border-indigo-600 bg-indigo-50 text-indigo-700"
-                  : "border-slate-200 text-slate-600 hover:border-slate-300"
-              }`}
+              className="py-3 px-4 transition-all"
+              style={{
+                background: difficulty === level ? "var(--fg)" : "var(--bg-surface)",
+                color: difficulty === level ? "var(--white)" : "var(--muted)",
+                fontFamily: "var(--font-space-mono)",
+                fontSize: "0.7rem",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+              }}
             >
               {level}
             </button>
@@ -76,45 +98,58 @@ export default function QuestionSetup({ onGenerate, loading }: Props) {
         </div>
       </div>
 
-      <div>
+      {/* Job description */}
+      <div style={{ borderTop: "1.5px dashed var(--border)", paddingTop: "1.5rem" }}>
         <button
           type="button"
           onClick={() => setShowJD(!showJD)}
-          className="text-sm font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+          className="flex items-center gap-2 transition-opacity hover:opacity-70"
+          style={{
+            fontFamily: "var(--font-space-mono)",
+            fontSize: "0.7rem",
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            color: "var(--muted)",
+          }}
         >
-          <svg
-            className={`h-4 w-4 transition-transform ${showJD ? "rotate-90" : ""}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-          </svg>
-          Tailor to a job description
+          <span>{showJD ? "▾" : "▸"}</span>
+          TAILOR TO A JOB DESCRIPTION
         </button>
         {showJD && (
           <textarea
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
-            placeholder="Paste a job description or link here to generate role-specific questions..."
-            className="mt-3 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none min-h-[120px] resize-y"
+            placeholder="Paste a job description or link here..."
+            className="mt-3 w-full px-4 py-3 text-sm focus:outline-none min-h-[120px] resize-y"
+            style={{
+              background: "var(--bg-surface)",
+              color: "var(--fg)",
+              border: "1.5px dashed var(--border)",
+              fontFamily: "var(--font-space-grotesk)",
+            }}
           />
         )}
       </div>
 
+      {/* Submit */}
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-xl bg-indigo-600 py-3.5 font-semibold text-white shadow-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+        className="w-full py-4 font-bold tracking-[0.2em] uppercase transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        style={{
+          fontFamily: "var(--font-space-mono)",
+          fontSize: "0.75rem",
+          background: "var(--fg)",
+          color: "var(--white)",
+        }}
       >
         {loading && (
-          <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
         )}
-        {loading ? "Generating Question..." : "Generate Question"}
+        {loading ? "GENERATING..." : "GENERATE QUESTION"}
       </button>
     </form>
   );

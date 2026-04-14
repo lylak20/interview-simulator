@@ -1,19 +1,22 @@
 @import "tailwindcss";
 
+/* Noggin design tokens — warm pinkish-beige palette */
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --bg: #F0E4DC;
+  --bg-surface: #E6D5CB;
+  --fg: #1A1A1A;
+  --muted: #9B8B85;
+  --border: #C9B9B2;
+  --tag-bg: #DDD0C9;
+  --tag-text: #6B5B55;
+  --white: #FAF5F2;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  background: #F0E4DC;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  background: #F0E4DC;
+  color: #1A1A1A;
 }

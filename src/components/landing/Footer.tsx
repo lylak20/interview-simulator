@@ -1,9 +1,21 @@
 export default function Footer() {
   return (
-    <footer className="mt-auto border-t border-slate-200 px-6 py-8">
-      <div className="mx-auto max-w-5xl text-center text-sm text-slate-500">
-        <p>
-          InterviewPrep AI — Built with Next.js and the Anthropic API
+    <footer
+      className="mt-auto px-6 py-8"
+      style={{ borderTop: "1.5px dashed var(--border)" }}
+    >
+      <div className="mx-auto max-w-2xl flex items-center justify-between">
+        <p
+          className="text-xs tracking-[0.14em] uppercase"
+          style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+        >
+          NOGGIN
+        </p>
+        <p
+          className="text-xs tracking-[0.14em] uppercase"
+          style={{ fontFamily: "var(--font-space-mono)", color: "var(--muted)" }}
+        >
+          BUILT WITH ANTHROPIC
         </p>
       </div>
     </footer>
